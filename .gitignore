@@ -1,0 +1,15 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+.env
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+
+# Supermemory local data
+*.db
+*.sqlite
