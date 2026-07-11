@@ -1,4 +1,4 @@
-"""Menu-bar app (feature #9): a visible indicator that sic. is listening,
+"""Menu-bar app (feature #9): a visible indicator that definately is listening,
 a live slip counter, one-click pause, send-now, and quit.
 """
 import datetime
@@ -12,9 +12,9 @@ from .config import load, save
 from .memory import Memory
 
 
-class SicApp(rumps.App):
+class DefinatelyApp(rumps.App):
     def __init__(self):
-        super().__init__("sic.", quit_button=None)
+        super().__init__("definately", quit_button=None)
         self.cfg = load()
         self.memory = Memory(self.cfg)
         self.capture = Capture(self.memory, self.cfg, on_slip=self._on_slip)
@@ -27,7 +27,7 @@ class SicApp(rumps.App):
             rumps.MenuItem("Send digest now", callback=self.send_now),
             self.pause_item,
             None,
-            rumps.MenuItem("Quit sic.", callback=self.quit_now),
+            rumps.MenuItem("Quit definately", callback=self.quit_now),
         ]
         self.capture.start()
         self._refresh_title()
@@ -91,17 +91,17 @@ class SicApp(rumps.App):
         self.memory.flush()
         text = digest.build(self.memory, self.cfg)
         if not text:
-            rumps.notification("sic.", "Clean slate", "No slips to report today.")
+            rumps.notification("definately", "Clean slate", "No slips to report today.")
             return
         try:
             notify.send_imessage(self.cfg["imessage_to"], text)
-            rumps.notification("sic.", "Digest sent", text[:120])
+            rumps.notification("definately", "Digest sent", text[:120])
         except Exception as e:
-            rumps.notification("sic.", "Could not send iMessage", str(e))
+            rumps.notification("definately", "Could not send iMessage", str(e))
 
 
 def main():
-    SicApp().run()
+    DefinatelyApp().run()
 
 
 if __name__ == "__main__":

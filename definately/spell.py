@@ -1,6 +1,6 @@
 """Spellchecking + the "is this actually a slip?" filter.
 
-Uses the Mac's own NSSpellChecker, so sic. agrees with the system dictionary
+Uses the Mac's own NSSpellChecker, so definately agrees with the system dictionary
 and respects words the user has taught macOS ("Learn Spelling").
 """
 import json
@@ -9,9 +9,9 @@ import re
 
 from AppKit import NSSpellChecker  # type: ignore
 
-from .config import SIC_DIR
+from .config import DATA_DIR
 
-WHITELIST_PATH = os.path.join(SIC_DIR, "whitelist.json")
+WHITELIST_PATH = os.path.join(DATA_DIR, "whitelist.json")
 
 _checker = NSSpellChecker.sharedSpellChecker()
 

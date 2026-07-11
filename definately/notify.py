@@ -19,7 +19,7 @@ end run
 
 def send_imessage(to, text):
     if not to:
-        raise ValueError("imessage_to is not set in ~/.sic/config.json")
+        raise ValueError("imessage_to is not set in ~/.definately/config.json")
     subprocess.run(
         ["osascript", "-e", SCRIPT, to, text],
         check=True, capture_output=True, timeout=30,

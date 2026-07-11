@@ -1,9 +1,9 @@
 """Command-line entry for testing without the menu bar.
 
-  python -m sic.cli doctor     # check Supermemory + Ollama + config
-  python -m sic.cli digest     # build today's digest and print it
-  python -m sic.cli send       # build and send via iMessage
-  python -m sic.cli seed       # inject demo slips (for the demo video)
+  python -m definately.cli doctor     # check Supermemory + Ollama + config
+  python -m definately.cli digest     # build today's digest and print it
+  python -m definately.cli send       # build and send via iMessage
+  python -m definately.cli seed       # inject demo slips (for the demo video)
 """
 import sys
 
@@ -27,7 +27,7 @@ def doctor(cfg):
         print("  ollama             ok")
     except Exception as e:
         print("  ollama             warn -", e, "(digest will use fallback)")
-    print("  imessage_to        %s" % (cfg["imessage_to"] or "NOT SET — edit ~/.sic/config.json"))
+    print("  imessage_to        %s" % (cfg["imessage_to"] or "NOT SET — edit ~/.definately/config.json"))
     return ok
 
 

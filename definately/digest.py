@@ -58,9 +58,9 @@ def build(memory, cfg):
         )
         text = r.json().get("response", "").strip()
         if text:
-            return "sic. — today's slip report\n" + text
+            return "definately — today's slip report\n" + text
     except Exception:
         pass
 
     # deterministic fallback: never miss a digest
-    return "sic. — today's slip report\n" + "\n".join(facts)
+    return "definately — today's slip report\n" + "\n".join(facts)

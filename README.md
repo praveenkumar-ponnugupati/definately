@@ -1,20 +1,20 @@
-# sic.
+# definately
 
 **Your Mac remembers every word you fumble — and every evening, texts you one tiny lesson made only of your own mistakes.**
 
 Built for the Supermemory **localhost:6767** hackathon (July 2026). Everything runs on your machine: capture, memory, and the language model. Nothing about your typing ever leaves your laptop — only the finished digest, sent to *you* over iMessage.
 
-> `[sic]` — the editor's mark for "the error was in the original." sic. quotes your own typos back to you.
+> Yes, the name is misspelled on purpose. *definately* is the typo it exists to cure — a spelling coach that has clearly met itself.
 
 ## What it does
 
 You install it and forget it. No window, no chatbot, no dashboard. You just type all day — Mail, Slack, Notes, code — and at 8pm your phone buzzes with one message:
 
 ```
-sic. — today's slip report
+definately — today's slip report
 ✏️ 6 slips today. Top offender: recieve → receive (4th time this month).
 🔁 You leaned on "very" 9× today — try genuinely, properly, or wildly.
-🎓 Graduated: definately — 21 days clean. Your fingers finally learned it.
+🎓 Graduated: seperate → separate — 21 days clean. Your fingers finally learned it.
 ```
 
 ## How it works
@@ -47,10 +47,10 @@ OPENAI_API_KEY=ollama OPENAI_BASE_URL=http://localhost:11434/v1 MODEL=llama3.2:3
 # 2. Ollama (the digest writer)
 ollama serve &  ollama pull llama3.2:3b
 
-# 3. sic.
+# 3. definately
 python3 -m venv venv && ./venv/bin/pip install -r requirements.txt
-# set "imessage_to" to your number/Apple ID in ~/.sic/config.json (created on first run)
-./venv/bin/python -m sic.app          # menu-bar app
+# set "imessage_to" to your number/Apple ID in ~/.definately/config.json (created on first run)
+./venv/bin/python -m definately.app          # menu-bar app
 ```
 
 Grant **Input Monitoring** and **Accessibility** to your terminal/Python when macOS prompts (needed to observe keystrokes).
@@ -58,10 +58,10 @@ Grant **Input Monitoring** and **Accessibility** to your terminal/Python when ma
 ### Try it without waiting for 8pm
 
 ```bash
-./venv/bin/python -m sic.cli doctor   # check the stack
-./venv/bin/python -m sic.cli seed     # inject demo slips
-./venv/bin/python -m sic.cli digest   # print today's digest
-./venv/bin/python -m sic.cli send     # send it to your phone
+./venv/bin/python -m definately.cli doctor   # check the stack
+./venv/bin/python -m definately.cli seed     # inject demo slips
+./venv/bin/python -m definately.cli digest   # print today's digest
+./venv/bin/python -m definately.cli send     # send it to your phone
 ```
 
 ## Roadmap

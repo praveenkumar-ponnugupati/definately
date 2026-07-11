@@ -1,14 +1,14 @@
-"""sic. configuration — loaded from ~/.sic/config.json, created with defaults on first run."""
+"""definately configuration — loaded from ~/.definately/config.json, created with defaults on first run."""
 import json
 import os
 
-SIC_DIR = os.path.expanduser("~/.sic")
-CONFIG_PATH = os.path.join(SIC_DIR, "config.json")
+DATA_DIR = os.path.expanduser("~/.definately")
+CONFIG_PATH = os.path.join(DATA_DIR, "config.json")
 
 DEFAULTS = {
     # Supermemory Local
     "supermemory_url": "http://localhost:6767",
-    "container_tag": "sic_slips",
+    "container_tag": "definately_slips",
     # Ollama (digest writer)
     "ollama_url": "http://localhost:11434",
     "ollama_model": "llama3.2:3b",
@@ -30,7 +30,7 @@ DEFAULTS = {
 
 
 def load():
-    os.makedirs(SIC_DIR, exist_ok=True)
+    os.makedirs(DATA_DIR, exist_ok=True)
     cfg = dict(DEFAULTS)
     if os.path.exists(CONFIG_PATH):
         with open(CONFIG_PATH) as f:
@@ -41,6 +41,6 @@ def load():
 
 
 def save(cfg):
-    os.makedirs(SIC_DIR, exist_ok=True)
+    os.makedirs(DATA_DIR, exist_ok=True)
     with open(CONFIG_PATH, "w") as f:
         json.dump(cfg, f, indent=2)

@@ -8,9 +8,9 @@ import threading
 
 import httpx
 
-from .config import SIC_DIR
+from .config import DATA_DIR
 
-STATS_PATH = os.path.join(SIC_DIR, "stats.json")
+STATS_PATH = os.path.join(DATA_DIR, "stats.json")
 _lock = threading.Lock()
 
 
