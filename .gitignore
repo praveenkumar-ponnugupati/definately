@@ -16,3 +16,7 @@ node_modules/
 
 # Supermemory local data
 .supermemory/
+
+# py2app build output
+build/
+dist/

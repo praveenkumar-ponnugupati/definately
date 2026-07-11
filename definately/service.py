@@ -24,9 +24,7 @@ PLIST_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
     <key>Label</key>            <string>{label}</string>
     <key>ProgramArguments</key>
     <array>
-        <string>{python}</string>
-        <string>-m</string>
-        <string>definately.app</string>
+{args}
     </array>
     <key>WorkingDirectory</key>  <string>{workdir}</string>
     <key>EnvironmentVariables</key>
@@ -49,12 +47,24 @@ def _domain_target():
     return "gui/%d" % os.getuid()
 
 
+def _program_args(workdir):
+    """Prefer the built .app bundle (its own TCC identity) if present;
+    otherwise run the module with the venv python."""
+    app_exec = os.path.join(workdir, "dist", "definately.app",
+                            "Contents", "MacOS", "definately")
+    if os.path.exists(app_exec):
+        return "        <string>%s</string>" % app_exec
+    return ("        <string>%s</string>\n"
+            "        <string>-m</string>\n"
+            "        <string>definately.app</string>" % sys.executable)
+
+
 def _write_plist():
     os.makedirs(os.path.dirname(PLIST_PATH), exist_ok=True)
     os.makedirs(LOG_DIR, exist_ok=True)
     workdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     plist = PLIST_TEMPLATE.format(
-        label=LABEL, python=sys.executable, workdir=workdir, log=LOG_DIR)
+        label=LABEL, args=_program_args(workdir), workdir=workdir, log=LOG_DIR)
     with open(PLIST_PATH, "w") as f:
         f.write(plist)
     return workdir

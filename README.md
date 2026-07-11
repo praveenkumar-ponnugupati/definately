@@ -115,6 +115,19 @@ Install once and definately starts at every login, stays running, and restarts i
 
 The installer prints the exact Python binary to authorize. Grant it **Accessibility** + **Input Monitoring** (and **Full Disk Access** for two-way iMessage) in System Settings › Privacy & Security — add the binary with the `+` button if it isn't listed. Service logs live in `~/.definately/logs/`.
 
+### Cleaner: build a real `.app`
+
+So macOS permissions attach to **definately.app** (not a raw python binary):
+
+```bash
+./venv/bin/pip install py2app
+./venv/bin/python setup_app.py py2app -A     # menu-bar app in ./dist/definately.app
+```
+
+Grant Accessibility / Input Monitoring / Full Disk Access to **definately.app**, then
+`service install` — it auto-detects `dist/definately.app` and runs that under launchd.
+(Drop `-A` for a distributable, relocatable bundle.)
+
 ### Try it without waiting for 8pm
 
 ```bash
