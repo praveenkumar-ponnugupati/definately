@@ -102,6 +102,19 @@ python3 -m venv venv && ./venv/bin/pip install -r requirements.txt
 
 Grant **Input Monitoring** and **Accessibility** to your terminal/Python when macOS prompts (needed to observe keystrokes).
 
+## Run it as a background service
+
+Install once and definately starts at every login, stays running, and restarts if it crashes (a macOS LaunchAgent):
+
+```bash
+./venv/bin/python -m definately.cli service install     # start now + every login
+./venv/bin/python -m definately.cli service status
+./venv/bin/python -m definately.cli service stop        # stop until next login
+./venv/bin/python -m definately.cli service uninstall   # remove entirely
+```
+
+The installer prints the exact Python binary to authorize. Grant it **Accessibility** + **Input Monitoring** (and **Full Disk Access** for two-way iMessage) in System Settings › Privacy & Security — add the binary with the `+` button if it isn't listed. Service logs live in `~/.definately/logs/`.
+
 ### Try it without waiting for 8pm
 
 ```bash

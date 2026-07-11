@@ -173,6 +173,9 @@ def main():
         listen(cfg, mem)
     elif cmd == "watch":
         watch(cfg, mem)
+    elif cmd == "service":
+        from . import service
+        service.main(sys.argv[2:])
     elif cmd == "digest":
         print(digest.build(mem, cfg) or "(clean day — nothing to report)")
     elif cmd == "send":
