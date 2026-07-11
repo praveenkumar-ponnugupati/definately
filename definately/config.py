@@ -9,9 +9,10 @@ DEFAULTS = {
     # Supermemory Local
     "supermemory_url": "http://localhost:6767",
     "container_tag": "definately_slips",
-    # Ollama (digest writer)
+    # Ollama (digest writer + conversational tutor). A bigger model gives sharper
+    # mnemonics/synonyms; drop to llama3.2:3b if you're tight on RAM.
     "ollama_url": "http://localhost:11434",
-    "ollama_model": "llama3.2:3b",
+    "ollama_model": "llama3.1:8b",
     # Delivery: your own phone number or Apple ID email, e.g. "+15551234567"
     "imessage_to": "",
     "tone": "kind",  # kind | snarky
