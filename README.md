@@ -57,9 +57,16 @@ to `notification` (banner) or `imessage` in `~/.definately/config.json`.
 ./venv/bin/python -m definately.cli config                  # show current settings
 ```
 
-## Two-way iMessage — control it from your phone
+## Two-way iMessage — chat, learn, and control from your phone
 
-definately reads your replies and acts on them, so you run it entirely by text:
+Text definately **anything** about spelling or words and it replies as a coach that
+knows *your* history — "why do I keep misspelling receive?", "a trick for ie/ei?",
+"a better word than *very*?". The conversation is grounded in your real mistakes
+(recalled from Supermemory) and remembers the last few turns. Quality of the
+teaching tracks your local model — a bigger `ollama_model` (e.g. `llama3.1:8b`)
+gives sharper mnemonics than the tiny default.
+
+It also understands fixed commands for reliable control:
 
 | You text… | It does |
 |---|---|

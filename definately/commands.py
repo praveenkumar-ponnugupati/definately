@@ -51,7 +51,8 @@ def _synonyms(cfg, word):
         return None
 
 
-HELP = ("definately commands:\n"
+HELP = ("definately — text me anything about spelling or words and we'll chat.\n"
+        "Or use quick commands:\n"
         "instant on/off · every 30 · at 9:00 18:00 · digest off\n"
         "tone kind/snarky · pause · resume · snooze 2h\n"
         "stats · more · quiz · help")
@@ -148,12 +149,17 @@ def handle(text, cfg, memory, app=None):
                 "starts '%s' and ends '%s' (you've slipped on it before)."
                 % (pick[0], pick[-1])) if len(pick) > 2 else "Reply: %s" % scrambled
 
-    # Fallback: if a quiz is pending and this wasn't a known command, it's the answer.
-    if state.get("quiz_answer"):
+    # A quiz answer? (one bare word while a quiz is pending, and not a command.)
+    if state.get("quiz_answer") and len(t.split()) == 1:
         target = state.pop("quiz_answer")
         _save_state(state)
         if low == target.lower():
             return "✅ Correct — '%s'. Nice." % target
         return "❌ Not quite. It's '%s'. You'll get it next time." % target
 
-    return "Didn't catch that. Reply 'help' for commands."
+    # Otherwise: talk to the tutor — a real conversation, grounded in your history.
+    from . import tutor
+    reply, new_history = tutor.chat(t, cfg, memory, state.get("chat_history", []))
+    state["chat_history"] = new_history
+    _save_state(state)
+    return reply
