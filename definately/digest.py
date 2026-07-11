@@ -32,6 +32,15 @@ def _facts(memory):
     for s in slips[:5]:
         lines.append("- Misspelled '%s' -> '%s' (%dx today, %dx all-time)"
                      % (s["word"], s["correction"] or "?", s["today"], s["total"]))
+
+    # Supermemory-powered pattern detection: for today's top offender, surface
+    # semantically-similar past mistakes (words the local counter can't relate).
+    if slips:
+        related = memory.related_slips(slips[0]["word"])
+        if related:
+            words = ", ".join("'%s'" % r["word"] for r in related)
+            lines.append("- Pattern: '%s' is the same kind of slip as %s (found by "
+                         "semantic memory)" % (slips[0]["word"], words))
     for word, count in memory.overused_today():
         lines.append("- Overused the word '%s' (%dx today)" % (word, count))
     for g in memory.check_graduations():

@@ -148,11 +148,50 @@ class Memory:
                 out.append({"word": word, "clean_days": r["clean_days"]})
         return out
 
-    def recall(self, query, limit=5):
-        """Semantic recall from Supermemory — used for history color in the digest."""
+    def related_slips(self, word, limit=6, min_similarity=0.6):
+        """Supermemory-powered: find PAST slips semantically related to `word`.
+
+        This is the one thing the local counter index cannot do — surface that
+        'recieve', 'beleive', 'acheive' are the same kind of mistake. Powers the
+        digest's 'you keep mixing up these' pattern line.
+        """
+        hits = self.recall("misspelled word similar to %s" % word, limit=limit + 3)
+        seen, out = {word.lower()}, []
+        for h in hits:
+            w = (h.get("word") or "").lower()
+            if not w or w in seen or not h.get("correction"):
+                continue
+            if h["similarity"] >= min_similarity:
+                seen.add(w)
+                out.append({"word": w, "correction": h["correction"],
+                            "similarity": h["similarity"]})
+        return out[:limit]
+
+    def recall(self, query, limit=5, threshold=0.3):
+        """Semantic recall from Supermemory Local.
+
+        Uses /v4/search in hybrid mode so it searches the embedded slip chunks
+        (works without the optional LLM memory-extraction agent). Returns a list
+        of {word, correction, app, count, similarity} dicts.
+        """
         try:
-            r = self.http.post(self.base + "/v3/search",
-                               json={"q": query, "containerTag": self.tag, "limit": limit})
-            return r.json().get("results", [])
+            r = self.http.post(
+                self.base + "/v4/search",
+                json={"q": query, "containerTag": self.tag,
+                      "searchMode": "hybrid", "threshold": threshold, "limit": limit},
+            )
+            out = []
+            for res in r.json().get("results", []):
+                md = res.get("metadata", {}) or {}
+                out.append({
+                    "text": res.get("chunk", ""),
+                    "word": md.get("word"),
+                    "correction": md.get("correction"),
+                    "app": md.get("app"),
+                    "count": md.get("count"),
+                    "kind": md.get("kind"),
+                    "similarity": round(res.get("similarity", 0), 3),
+                })
+            return out
         except Exception:
             return []
