@@ -128,7 +128,8 @@ def watch(cfg, mem):
     n = [0]
     def on_slip(word, correction):
         n[0] += 1
-        print("  #%d  %-16s -> %-16s  [%s]" % (n[0], word, correction, frontmost_app()))
+        print("  #%d  %-16s -> %-16s  [%s]" % (n[0], word, correction, frontmost_app()),
+              flush=True)  # flush so live output shows even when piped
     cap = Capture(mem, cfg, on_slip=on_slip)
     cap.start()
     print("  watching your typing — go type some misspelled words in any app.")
