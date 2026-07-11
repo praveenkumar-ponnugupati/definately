@@ -120,6 +120,27 @@ def listen(cfg, mem):
         print("\n  stopped.")
 
 
+def watch(cfg, mem):
+    """Live capture test: prints each slip as you type it in any app.
+    Needs Input Monitoring / Accessibility permission for your terminal."""
+    import time
+    from .capture import Capture, frontmost_app
+    n = [0]
+    def on_slip(word, correction):
+        n[0] += 1
+        print("  #%d  %-16s -> %-16s  [%s]" % (n[0], word, correction, frontmost_app()))
+    cap = Capture(mem, cfg, on_slip=on_slip)
+    cap.start()
+    print("  watching your typing — go type some misspelled words in any app.")
+    print("  (Ctrl-C here to stop)\n")
+    try:
+        while True:
+            time.sleep(1)
+            mem.flush()
+    except KeyboardInterrupt:
+        print("\n  caught %d slip(s) this session." % n[0])
+
+
 def main():
     cfg = load()
     cmd = sys.argv[1] if len(sys.argv) > 1 else "doctor"
@@ -150,6 +171,8 @@ def main():
         print("  definately  : " + commands.handle(text, cfg, mem).replace("\n", "\n              "))
     elif cmd == "listen":
         listen(cfg, mem)
+    elif cmd == "watch":
+        watch(cfg, mem)
     elif cmd == "digest":
         print(digest.build(mem, cfg) or "(clean day — nothing to report)")
     elif cmd == "send":
