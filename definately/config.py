@@ -14,8 +14,22 @@ DEFAULTS = {
     "ollama_model": "llama3.2:3b",
     # Delivery: your own phone number or Apple ID email, e.g. "+15551234567"
     "imessage_to": "",
-    "digest_time": "20:00",
     "tone": "kind",  # kind | snarky
+
+    # ---- WHEN do you want to hear about mistakes? Two independent channels. ----
+
+    # (1) Instant alerts: get corrected the MOMENT you make a mistake.
+    "instant_alerts": False,           # True = real-time coaching on every slip
+    "instant_channel": "notification", # "notification" (banner) | "imessage"
+    "instant_min_gap_seconds": 0,      # throttle: min seconds between instant alerts (0 = none)
+
+    # (2) Batched digest: a summary on YOUR schedule.
+    "digest": {
+        "mode": "scheduled",           # "scheduled" | "interval" | "off"
+        "times": ["20:00"],            # scheduled: one or more HH:MM per day
+        "every_minutes": 120,          # interval: send every N minutes while you work
+        "channel": "imessage",         # "imessage" | "notification"
+    },
     # Apps never captured (bundle-id substrings, case-insensitive)
     "app_blocklist": [
         "terminal", "iterm", "1password", "keychain", "bitwarden", "keeper",

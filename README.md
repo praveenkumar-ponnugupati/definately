@@ -33,9 +33,29 @@ definately — today's slip report
 
 - ✅ **Autocorrect-hidden errors** — logs what you *actually* typed
 - ✅ **Jargon armor** — ignores names, acronyms, code identifiers, and auto-learns your vocabulary
+- ✅ **Your schedule, your way** — instant alerts on every mistake, and/or a batched digest at set times or every N minutes
 - ✅ **Personality** — warm or snarky, five lines max (`tone` in config)
 - ✅ **Graduation & relapse** — words you stop misspelling graduate; if they come back, the streak resets
 - ✅ **Visible & pausable** — a menu-bar dot shows it's listening; one click to pause
+
+## When do you want to hear about mistakes?
+
+Two independent channels — use either or both:
+
+**1. Instant alerts** — get corrected the moment you slip, like a live coach:
+```bash
+./venv/bin/python -m definately.cli config instant on
+```
+Each mistake pops a banner: `recieve → receive (4th time)`. Set `instant_channel`
+to `notification` (banner) or `imessage` in `~/.definately/config.json`.
+
+**2. Batched digest** — a summary on your schedule:
+```bash
+./venv/bin/python -m definately.cli config at 09:00 18:00   # specific times
+./venv/bin/python -m definately.cli config every 30         # every 30 minutes
+./venv/bin/python -m definately.cli config digest off       # instant-only
+./venv/bin/python -m definately.cli config                  # show current settings
+```
 
 ## Quick start
 

@@ -96,6 +96,10 @@ class Memory:
 
     # ---------- reads (digest fuel) ----------
 
+    def count_for(self, word):
+        e = self.stats["slips"].get(word.lower())
+        return e["count"] if e else 0
+
     def slips_today(self):
         out = []
         for word, e in self.stats["slips"].items():

@@ -24,3 +24,26 @@ def send_imessage(to, text):
         ["osascript", "-e", SCRIPT, to, text],
         check=True, capture_output=True, timeout=30,
     )
+
+
+NOTIF_SCRIPT = '''
+on run {theTitle, theBody}
+    display notification theBody with title theTitle
+end run
+'''
+
+
+def send_notification(title, text):
+    """A macOS banner — instant, local, doesn't touch your phone."""
+    subprocess.run(
+        ["osascript", "-e", NOTIF_SCRIPT, title, text],
+        check=True, capture_output=True, timeout=15,
+    )
+
+
+def deliver(channel, imessage_to, title, text):
+    """Route a message to the chosen channel."""
+    if channel == "imessage":
+        send_imessage(imessage_to, text)
+    else:
+        send_notification(title, text)

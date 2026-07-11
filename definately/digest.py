@@ -26,6 +26,16 @@ Rules:
 - Never invent facts or numbers not listed above."""
 
 
+_ORDINAL = ["", "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th"]
+
+
+def instant_line(word, correction, count):
+    """One-line real-time correction, e.g. 'recieve → receive (4th time)'."""
+    nth = _ORDINAL[count] if count < len(_ORDINAL) else "%dth" % count
+    tail = " (%s time)" % nth if count > 1 else ""
+    return "%s → %s%s" % (word, correction, tail)
+
+
 def _facts(memory):
     lines = []
     slips = memory.slips_today()
