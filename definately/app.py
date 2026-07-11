@@ -5,7 +5,7 @@ import datetime
 
 import rumps
 
-from . import digest, notify
+from . import commands, digest, imessage_in, notify
 from .capture import Capture
 from .config import load, save
 from .memory import Memory
@@ -41,6 +41,7 @@ class DefinatelyApp(rumps.App):
         # periodic (every 60s): flush counts, check graduations, check schedule
         rumps.Timer(self._tick, 60).start()
         self._schedule_digest()
+        self._init_interactive()  # two-way iMessage control
 
     # ---------- UI ----------
 
@@ -73,6 +74,22 @@ class DefinatelyApp(rumps.App):
         paused = self.capture.toggle_pause()
         self.pause_item.title = "Resume" if paused else "Pause"
         self._refresh_title()
+
+    def set_paused(self, value):
+        """Programmatic pause/resume (used by iMessage 'pause'/'resume'/'snooze')."""
+        if self.capture.paused != value:
+            self.capture.toggle_pause()
+        self.pause_item.title = "Resume" if value else "Pause"
+        self._refresh_title()
+
+    def snooze(self, minutes):
+        self.set_paused(True)
+        self._snooze_timer = rumps.Timer(self._auto_resume, max(60, minutes * 60))
+        self._snooze_timer.start()
+
+    def _auto_resume(self, sender):
+        sender.stop()
+        self.set_paused(False)
 
     def toggle_instant(self, sender):
         on = not self.cfg.get("instant_alerts")
@@ -121,6 +138,46 @@ class DefinatelyApp(rumps.App):
         if d.get("mode", "scheduled") == "interval":
             secs = max(60, int(d.get("every_minutes", 120)) * 60)
             rumps.Timer(lambda _: self.send_now(None), secs).start()
+
+    # ---------- interactive iMessage ----------
+
+    def _init_interactive(self):
+        """Start listening for replies, so you can control definately by texting back."""
+        self._msg_cursor = None
+        to = self.cfg.get("imessage_to")
+        if not to or not imessage_in.available():
+            return  # no number set, or Full Disk Access not granted -> stays one-way
+        st = commands._load_state()
+        self._msg_cursor = st.get("msg_cursor") or imessage_in.latest_rowid()
+        rumps.Timer(self._poll_messages, 8).start()  # check for replies every 8s
+        # first-run welcome so the user knows their controls
+        if not st.get("welcomed"):
+            st["welcomed"] = True
+            commands._save_state(st)
+            try:
+                notify.send_imessage(to, "definately is watching your spelling. "
+                                         "Reply 'help' anytime to control me from here.")
+            except Exception:
+                pass
+
+    def _poll_messages(self, _):
+        if self._msg_cursor is None:
+            return
+        to = self.cfg.get("imessage_to")
+        for rowid, text in imessage_in.fetch_incoming(self._msg_cursor, only_from=to):
+            self._msg_cursor = rowid
+            if not text:
+                continue
+            reply = commands.handle(text, self.cfg, self.memory, app=self)
+            try:
+                notify.send_imessage(to, reply)
+            except Exception:
+                pass
+            self.schedule_item.title = self._schedule_label()  # reflect any change
+            self.instant_item.state = 1 if self.cfg.get("instant_alerts") else 0
+        st = commands._load_state()
+        st["msg_cursor"] = self._msg_cursor
+        commands._save_state(st)
 
     # ---------- digest ----------
 

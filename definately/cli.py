@@ -92,6 +92,34 @@ def configure(cfg, args):
     save(cfg)
 
 
+def listen(cfg, mem):
+    """Standalone two-way loop: read your iMessage replies, act, respond."""
+    import time
+    from . import commands, imessage_in, notify
+    if not cfg.get("imessage_to"):
+        print("  set imessage_to in ~/.definately/config.json first"); return
+    if not imessage_in.available():
+        print("  Can't read Messages. Grant Full Disk Access to your terminal:")
+        print("  System Settings > Privacy & Security > Full Disk Access."); return
+    cursor = imessage_in.latest_rowid()
+    print("  listening for replies from %s  (Ctrl-C to stop)" % cfg["imessage_to"])
+    try:
+        while True:
+            for rowid, text in imessage_in.fetch_incoming(cursor, only_from=cfg["imessage_to"]):
+                cursor = rowid
+                if not text:
+                    continue
+                reply = commands.handle(text, cfg, mem)
+                print("  <- %r\n  -> %s" % (text, reply.replace(chr(10), " / ")))
+                try:
+                    notify.send_imessage(cfg["imessage_to"], reply)
+                except Exception as e:
+                    print("     (send failed: %s)" % e)
+            time.sleep(3)
+    except KeyboardInterrupt:
+        print("\n  stopped.")
+
+
 def main():
     cfg = load()
     cmd = sys.argv[1] if len(sys.argv) > 1 else "doctor"
@@ -115,6 +143,13 @@ def main():
               ", ".join("%s->%s" % (w, c) for w, c in slips) or "none"))
     elif cmd == "config":
         configure(cfg, sys.argv[2:])
+    elif cmd == "reply":
+        from . import commands
+        text = " ".join(sys.argv[2:])
+        print("  you replied: %r" % text)
+        print("  definately  : " + commands.handle(text, cfg, mem).replace("\n", "\n              "))
+    elif cmd == "listen":
+        listen(cfg, mem)
     elif cmd == "digest":
         print(digest.build(mem, cfg) or "(clean day — nothing to report)")
     elif cmd == "send":

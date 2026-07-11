@@ -57,6 +57,26 @@ to `notification` (banner) or `imessage` in `~/.definately/config.json`.
 ./venv/bin/python -m definately.cli config                  # show current settings
 ```
 
+## Two-way iMessage — control it from your phone
+
+definately reads your replies and acts on them, so you run it entirely by text:
+
+| You text… | It does |
+|---|---|
+| `help` | lists commands |
+| `instant on` / `off` | toggle real-time alerts |
+| `every 30` · `at 9:00 18:00` · `digest off` | reschedule the digest |
+| `tone snarky` / `kind` | change the voice |
+| `pause` · `resume` · `snooze 2h` | stop/start capturing |
+| `stats` / `top` | your worst words |
+| `more` | fresher synonyms for today's overused word |
+| `quiz` | a spelling challenge — reply to answer |
+
+Your preferences persist to `~/.definately/config.json` — they're yours. This
+needs **Full Disk Access** (System Settings › Privacy & Security › Full Disk
+Access) so definately can read your own incoming messages locally; nothing is
+sent anywhere. Test it standalone with `./venv/bin/python -m definately.cli listen`.
+
 ## Quick start
 
 ```bash
