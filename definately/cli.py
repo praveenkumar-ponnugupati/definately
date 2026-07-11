@@ -4,6 +4,7 @@
   python -m definately.cli digest     # build today's digest and print it
   python -m definately.cli send       # build and send via iMessage
   python -m definately.cli seed       # inject demo slips (for the demo video)
+  python -m definately.cli simulate "text with tpyos"  # type text through capture -> real memory
 """
 import sys
 
@@ -53,6 +54,19 @@ def main():
         doctor(cfg)
     elif cmd == "seed":
         seed(mem)
+    elif cmd == "simulate":
+        from .capture import Capture
+        import definately.capture as capmod
+        capmod.frontmost_app = lambda: "Notes"  # pretend we're typing in Notes
+        text = sys.argv[2] if len(sys.argv) > 2 else \
+            "I definately recieve seperate emails that occured yesterday"
+        slips = []
+        cap = Capture(mem, cfg, on_slip=lambda w, c: slips.append((w, c)))
+        cap.feed_text(text + " ")
+        mem.flush()
+        print("  typed: %s" % text)
+        print("  caught %d slip(s): %s" % (len(slips),
+              ", ".join("%s->%s" % (w, c) for w, c in slips) or "none"))
     elif cmd == "digest":
         print(digest.build(mem, cfg) or "(clean day — nothing to report)")
     elif cmd == "send":

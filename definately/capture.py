@@ -13,6 +13,16 @@ from . import spell
 
 SEPARATORS = set(" .,;:!?\n\t\"()[]{}<>/")
 
+# Modifier keys fire as no-char events while typing (e.g. Shift before a capital).
+# Built defensively because names vary across platforms/pynput versions.
+_MODIFIER_NAMES = [
+    "shift", "shift_r", "shift_l", "ctrl", "ctrl_r", "ctrl_l",
+    "alt", "alt_r", "alt_l", "alt_gr", "cmd", "cmd_r", "cmd_l", "caps_lock",
+]
+MODIFIER_KEYS = frozenset(
+    getattr(keyboard.Key, name) for name in _MODIFIER_NAMES if hasattr(keyboard.Key, name)
+)
+
 
 def frontmost_app():
     try:
@@ -46,12 +56,33 @@ class Capture:
         self.buffer = []
         return self.paused
 
+    def feed_text(self, text):
+        """Simulate typing `text` through the real key path (Shift emitted for
+        capitals, Key.space/backspace/etc. for control chars). Used for testing
+        and the demo without OS keyboard permissions."""
+        from pynput.keyboard import Key, KeyCode
+        specials = {" ": Key.space, "\n": Key.enter, "\t": Key.tab}
+        for ch in text:
+            if ch in specials:
+                self._on_press(specials[ch])
+            elif ch == "\b":
+                self._on_press(Key.backspace)
+            else:
+                if ch.isupper():
+                    self._on_press(Key.shift)  # real typing emits Shift first
+                self._on_press(KeyCode.from_char(ch))
+
     # ---------- key handling ----------
 
     def _on_press(self, key):
         if self.paused:
             return
         try:
+            # Modifiers (shift/ctrl/alt/cmd/caps) fire as separate no-char events
+            # WHILE typing — e.g. Shift before a capital letter. They must NOT
+            # end or clear the word in progress.
+            if key in MODIFIER_KEYS:
+                return
             if key == keyboard.Key.backspace:
                 if self.buffer:
                     self.buffer.pop()
@@ -61,7 +92,8 @@ class Capture:
                 return
             ch = getattr(key, "char", None)
             if ch is None:
-                # arrows, cmd, etc. — a navigation key ends the word untrusted
+                # genuine cursor movement / focus change (arrows, home, esc, fn keys):
+                # we can no longer trust the word position, so drop it.
                 self.buffer = []
                 return
             if ch in SEPARATORS:
