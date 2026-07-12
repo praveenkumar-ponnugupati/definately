@@ -57,18 +57,26 @@ to `notification` (banner) or `imessage` in `~/.definately/config.json`.
 ./venv/bin/python -m definately.cli config                  # show current settings
 ```
 
-## Two-way iMessage — chat, learn, and control from your phone
+## Chat & learn — in the terminal (`definately chat`)
 
-Text definately **anything** about spelling or words and it replies as a coach that
-knows *your* history — "why do I keep misspelling receive?", "a trick for ie/ei?",
-"a better word than *very*?". The conversation is grounded in your real mistakes
-(recalled from Supermemory) and remembers the last few turns. Quality of the
-teaching tracks your local model — a bigger `ollama_model` (e.g. `llama3.1:8b`)
-gives sharper mnemonics than the tiny default.
+Talk to a coach that knows *your* history — fully local, no permissions:
 
-It also understands fixed commands for reliable control:
+```bash
+./venv/bin/python -m definately.cli chat
+```
+```
+you > why do I keep misspelling receive?
+  definately > You've slipped on 'receive' 3× — try "i before e, except after c".
+you > give me a trick for it
+  definately > ...
+```
 
-| You text… | It does |
+It answers "a better word than *very*?", "a trick for ie/ei?", etc., grounded in
+your real mistakes (recalled from Supermemory) and remembering the last few turns.
+Teaching quality tracks your local model — `llama3.1:8b` gives sharper mnemonics
+than the tiny `llama3.2:3b`. The same brain also understands fixed commands:
+
+| You type… | It does |
 |---|---|
 | `help` | lists commands |
 | `instant on` / `off` | toggle real-time alerts |
@@ -77,12 +85,14 @@ It also understands fixed commands for reliable control:
 | `pause` · `resume` · `snooze 2h` | stop/start capturing |
 | `stats` / `top` | your worst words |
 | `more` | fresher synonyms for today's overused word |
-| `quiz` | a spelling challenge — reply to answer |
+| `quiz` | a spelling challenge |
 
-Your preferences persist to `~/.definately/config.json` — they're yours. This
-needs **Full Disk Access** (System Settings › Privacy & Security › Full Disk
-Access) so definately can read your own incoming messages locally; nothing is
-sent anywhere. Test it standalone with `./venv/bin/python -m definately.cli listen`.
+Your preferences persist to `~/.definately/config.json` — they're yours.
+
+**iMessage is send-only by default** (digests + instant alerts, no invasive
+permission). Two-way control by replying to texts is *opt-in*: set
+`imessage_interactive: true` and grant Full Disk Access, then
+`./venv/bin/python -m definately.cli listen`. Most people just use `chat`.
 
 ## Quick start
 

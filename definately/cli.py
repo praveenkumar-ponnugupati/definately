@@ -120,6 +120,31 @@ def listen(cfg, mem):
         print("\n  stopped.")
 
 
+def chat_repl(cfg, mem):
+    """Interactive tutor in the terminal — chat about your spelling, fully local.
+    Same brain as the messaging tutor: fixed commands + conversation grounded in
+    your history (Supermemory) with a local LLM (Ollama)."""
+    from . import commands
+    print("definately chat — talk about your spelling & words, or type a command.")
+    print("  try: stats · quiz · more · 'why do I keep misspelling review?'")
+    print("  (type 'exit' or Ctrl-C to quit)\n")
+    try:
+        while True:
+            try:
+                text = input("you > ").strip()
+            except EOFError:
+                break
+            if not text:
+                continue
+            if text.lower() in ("exit", "quit", "bye"):
+                break
+            reply = commands.handle(text, cfg, mem)
+            print("  definately > " + reply.replace("\n", "\n                ") + "\n")
+    except KeyboardInterrupt:
+        pass
+    print("\n  bye — keep spelling boldly.")
+
+
 def watch(cfg, mem):
     """Live capture test: prints each slip as you type it in any app.
     Needs Input Monitoring / Accessibility permission for your terminal."""
@@ -172,6 +197,8 @@ def main():
         print("  definately  : " + commands.handle(text, cfg, mem).replace("\n", "\n              "))
     elif cmd == "listen":
         listen(cfg, mem)
+    elif cmd == "chat":
+        chat_repl(cfg, mem)
     elif cmd == "watch":
         watch(cfg, mem)
     elif cmd == "service":

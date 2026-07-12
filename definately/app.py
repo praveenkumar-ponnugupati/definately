@@ -145,6 +145,10 @@ class DefinatelyApp(rumps.App):
         """Start listening for replies, so you can control definately by texting back."""
         self._msg_cursor = None
         to = self.cfg.get("imessage_to")
+        # Off by default: interactive chat is the CLI (`definately chat`). Only read
+        # Messages if the user explicitly opted in (needs Full Disk Access).
+        if not self.cfg.get("imessage_interactive"):
+            return
         if not to or not imessage_in.available():
             return  # no number set, or Full Disk Access not granted -> stays one-way
         st = commands._load_state()

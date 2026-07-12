@@ -19,6 +19,12 @@ DEFAULTS = {
 
     # ---- WHEN do you want to hear about mistakes? Two independent channels. ----
 
+    # Interactive chat lives in the CLI (`definately chat`) — fully local, no
+    # permissions. iMessage is SEND-ONLY by default (digests/alerts). Set this
+    # True only if you want to control definately by replying to texts, which
+    # requires Full Disk Access to read your Messages db.
+    "imessage_interactive": False,
+
     # (1) Instant alerts: get corrected the MOMENT you make a mistake.
     "instant_alerts": False,           # True = real-time coaching on every slip
     "instant_channel": "notification", # "notification" (banner) | "imessage"
